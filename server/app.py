@@ -26,8 +26,14 @@ def messages():
     return response
   elif request.method == 'POST':
     front_data = request.get_json()
-    new_message = Message()
-    pass
+    new_message = Message(
+       body = front_data.get("body"),
+       username = front_data.get("username")
+    )
+    db.session.add(new_message)
+    db.session.commit()
+    response = make_response(new_message.to_dict(), 201)
+    return response
       
 @app.route('/messages/<int:id>', methods=['PATCH', 'DELETE'])
 def messages_by_id(id):
