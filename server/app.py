@@ -14,11 +14,22 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
-@app.route('/messages')
+@app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    return ''
-
-@app.route('/messages/<int:id>')
+  if request.method == 'GET':
+    #GET ALL THE MESSAGES FROM DATABASE
+    #LOOP THROUGH AND CALL THE .to_dict()method on each object
+    messages = [message.to_dict() for message in Message.query.all()]
+    #create a response with make_response
+    response = make_response(messages, 200)
+    #return the response
+    return response
+  elif request.method == 'POST':
+    front_data = request.get_json()
+    new_message = Message()
+    pass
+      
+@app.route('/messages/<int:id>', methods=['PATCH', 'DELETE'])
 def messages_by_id(id):
     return ''
 
