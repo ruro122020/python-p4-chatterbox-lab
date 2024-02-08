@@ -37,7 +37,30 @@ def messages():
       
 @app.route('/messages/<int:id>', methods=['PATCH', 'DELETE'])
 def messages_by_id(id):
-    return ''
+  message = Message.query.filter(Message.id == id).first()
+
+  if request.method == 'PATCH':
+    print('here')
+    data = request.get_json()
+    for attr in data:
+      setattr(message, attr, data[attr])
+    #print(message.body)
+    db.session.add(message)
+    db.session.commit()
+    return make_response(message.to_dict(), 200)
+  
+  if request.method == 'DELETE':
+    #delete message from database
+    db.session.delete(message)
+    db.session.commit()
+    #create response
+    response = {
+      "delete_successful": True,
+      "message": "Message deleted."
+    }
+    #return response
+    return make_response(response, 200)
+
 
 if __name__ == '__main__':
     app.run(port=5555)
